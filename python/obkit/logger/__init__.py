@@ -35,7 +35,7 @@ def emit(event, phase, attrs=None):
     if log_file is None:
         if not _state["warned_uninit"]:
             print(
-                "obkit: emit() called before init_logger(); events discarded."
+                "obkit: emit() called before init_logger(); events discarded.",
                 file=sys.stderr,
             )
             _state["warned_uninit"] = True

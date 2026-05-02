@@ -4,7 +4,7 @@ import tempfile
 
 import pytest
 
-from obkit.logger import _state, emit, init_logger
+from obkit.logger import emit, init_logger
 
 
 def read_events(log_file):

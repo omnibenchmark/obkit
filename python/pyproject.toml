@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "obkit"
 version = "0.1.0"
 description = "Omnibenchmark utility toolkit"
+license = {file = "LICENSE"}
 requires-python = ">=3.9"
 
 [tool.pytest.ini_options]

@@ -1,7 +1,7 @@
 # obkit
 
-Lean utility toolkit for [omnibenchmark](https://omnibenchmark.org) /
-Snakemake workflows. Available for Python and R. Zero or near-zero
+Utility toolkit for [omnibenchmark](https://omnibenchmark.org) modules and
+snakemake workflows. Available for Python and R. Zero or near-zero
 dependencies.
 
 ## Modules

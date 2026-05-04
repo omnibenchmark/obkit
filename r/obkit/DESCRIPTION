@@ -2,7 +2,7 @@ Package: obkit
 Type: Package
 Title: Omnibenchmark Utility Toolkit
 Version: 0.0.1
-Authors@R: person("Omnibenchmark Contributors", role = c("aut", "cre"))
+Authors@R: person(given = "Omnibenchmark Contributors", email = "ben.uzh@proton.me", role = c("aut", "cre"))
 Description: Lean utilities for omnibenchmark workflows. Provides structured
     JSONL event logging (logger_init(), logger_emit()) and profiler alignment
     helpers, with minimal dependencies.

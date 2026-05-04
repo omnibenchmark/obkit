@@ -4,10 +4,42 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "obkit"
-version = "0.1.0"
-description = "Omnibenchmark utility toolkit"
-license = {file = "LICENSE"}
+version = "0.0.1"
+description = "Utility toolkit for omnibenchmark modules and Snakemake workflows"
+readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.9"
+authors = [{ name = "Omnibenchmark Contributors" }]
+keywords = ["omnibenchmark", "snakemake", "benchmarking", "logging", "profiling"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: System :: Logging",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.6"]
+
+[project.urls]
+Homepage = "https://omnibenchmark.org"
+Repository = "https://github.com/omnibenchmark/obkit"
+Issues = "https://github.com/omnibenchmark/obkit/issues"
+
+[tool.setuptools.packages.find]
+include = ["obkit*"]
+exclude = ["tests*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

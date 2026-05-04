@@ -7,3 +7,8 @@
 omnibenchR.Rcheck/
 *.pyc
 *.swp
+__pycache__/
+.pytest_cache/
+*.egg-info/
+build/
+dist/

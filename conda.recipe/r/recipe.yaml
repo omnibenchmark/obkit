@@ -13,18 +13,9 @@ build:
   noarch: generic
   number: 0
   script:
-    - if: unix
-      then:
-        - mv DESCRIPTION DESCRIPTION.bak
-        - sed "s/^Version: .*/Version: ${{ version }}/" DESCRIPTION.bak > DESCRIPTION
-        - rm DESCRIPTION.bak
-        - $R CMD INSTALL --build .
-    - if: win
-      then:
-        - move DESCRIPTION DESCRIPTION.bak
-        - powershell -Command "(Get-Content DESCRIPTION.bak) -replace '^Version: .*', 'Version: ${{ version }}' | Set-Content DESCRIPTION"
-        - del DESCRIPTION.bak
-        - "%R% CMD INSTALL --build ."
+    env:
+      PKG_VERSION: ${{ version }}
+    file: build.sh
 
 requirements:
   host:
@@ -36,10 +27,7 @@ requirements:
 
 tests:
   - script:
-      - if: unix
-        then: $R -e "library(obkit); stopifnot(exists('logger_init'))"
-      - if: win
-        then: '%R% -e "library(obkit); stopifnot(exists(''logger_init''))"'
+      - 'R -e "library(obkit); stopifnot(exists(''logger_init''))"'
 
 about:
   homepage: https://github.com/omnibenchmark/obkit

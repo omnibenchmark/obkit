@@ -1,0 +1,52 @@
+context:
+  name: r-obkit
+  version: ${{ env.get("OBKIT_VERSION", default="0.0.0.dev0") }}
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+source:
+  path: ../../r/obkit
+
+build:
+  noarch: generic
+  number: 0
+  script:
+    - if: unix
+      then:
+        - mv DESCRIPTION DESCRIPTION.bak
+        - sed "s/^Version: .*/Version: ${{ version }}/" DESCRIPTION.bak > DESCRIPTION
+        - rm DESCRIPTION.bak
+        - $R CMD INSTALL --build .
+    - if: win
+      then:
+        - move DESCRIPTION DESCRIPTION.bak
+        - powershell -Command "(Get-Content DESCRIPTION.bak) -replace '^Version: .*', 'Version: ${{ version }}' | Set-Content DESCRIPTION"
+        - del DESCRIPTION.bak
+        - "%R% CMD INSTALL --build ."
+
+requirements:
+  host:
+    - r-base >=4.0
+    - r-jsonlite
+  run:
+    - r-base >=4.0
+    - r-jsonlite
+
+tests:
+  - script:
+      - if: unix
+        then: $R -e "library(obkit); stopifnot(exists('logger_init'))"
+      - if: win
+        then: '%R% -e "library(obkit); stopifnot(exists(''logger_init''))"'
+
+about:
+  homepage: https://github.com/omnibenchmark/obkit
+  license: MIT
+  license_file: LICENSE
+  summary: Utility toolkit for omnibenchmark modules and Snakemake workflows
+  description: |
+    Lean utilities for omnibenchmark workflows: structured JSONL event
+    logging (logger_init, logger_emit) and profiler alignment helpers.
+  repository: https://github.com/omnibenchmark/obkit

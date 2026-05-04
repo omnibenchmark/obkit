@@ -26,6 +26,27 @@ at workflow run, bound to this repo + workflow file + environment.
 
 The pending publisher upgrades to a real one on first successful upload.
 
+### prefix.dev Trusted Publishing
+
+Conda packages are published to two channels on prefix.dev:
+
+- `edge` — every push to `main` (rolling builds, may include `.postN` versions)
+- `almost-conductor` — only on `v*` tags (stable releases)
+
+prefix.dev supports OIDC trusted publishing the same way PyPI does. To
+register the publisher:
+
+1. Sign in to <https://prefix.dev> with the GitHub account that owns the
+   `edge` and `almost-conductor` channels.
+2. For each channel, go to channel settings → Trusted publishers → add a
+   GitHub publisher pointing at:
+   - Owner: `omnibenchmark`
+   - Repository: `obkit`
+   - Workflow filename: `conda-package.yml`
+
+No API token is stored in repo secrets. The `id-token: write` permission
+in the publish job is what mints the short-lived OIDC credential.
+
 ### GitHub permissions
 
 The release workflow needs `contents: write` to create releases and
@@ -81,6 +102,14 @@ cd python && rm -rf dist build obkit.egg-info && uv build && uvx twine check dis
 # R
 R CMD build r/obkit
 R CMD check --no-manual --as-cran obkit_*.tar.gz
+
+# Conda (requires rattler-build)
+OBKIT_VERSION=0.0.2 rattler-build build \
+  --recipe conda.recipe/python/recipe.yaml \
+  --output-dir /tmp/rattler-output
+OBKIT_VERSION=0.0.2 rattler-build build \
+  --recipe conda.recipe/r/recipe.yaml \
+  --output-dir /tmp/rattler-output
 ```
 
 ## What gets shipped
@@ -90,6 +119,9 @@ R CMD check --no-manual --as-cran obkit_*.tar.gz
 - **Python sdist**: includes `LICENSE`, `README.md`, `pyproject.toml`,
   and tests (harmless).
 - **R tarball**: standard `R CMD build` output.
+- **Conda packages**: `obkit-<version>-pyXX_0.conda` (Python, noarch) and
+  `r-obkit-<version>-r4X_0.conda` (R, noarch generic). Both go to
+  `edge` on every main push and to `almost-conductor` on `v*` tags.
 
 ## Rolling back
 

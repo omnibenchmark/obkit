@@ -1,0 +1,118 @@
+name: Conda Package
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  RATTLER_BUILD_VERSION: "0.31.1"
+
+jobs:
+  build:
+    name: Build (${{ matrix.recipe }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        recipe: [python, r]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Compute version
+        shell: bash
+        run: |
+          # v0.0.1-0-gabcdef  → 0.0.1       (exact tag)
+          # v0.0.1-5-gabcdef  → 0.0.1.post5 (N commits after tag)
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          RAW=$(git describe --tags --long --match 'v*' 2>/dev/null \
+                || echo "v0.0.0-${COMMIT_COUNT}-g$(git rev-parse --short HEAD)")
+          TAG=$(echo "$RAW" | sed 's/^v//' | sed 's/-.*//')
+          N=$(echo "$RAW"   | sed 's/[^-]*-//' | cut -d- -f1)
+          if [ "$N" = "0" ]; then
+            VERSION="$TAG"
+          else
+            VERSION="${TAG}.post${N}"
+          fi
+          echo "OBKIT_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Building version: $VERSION"
+
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.5.0
+        with:
+          pixi-version: latest
+          run-install: false
+
+      - name: Install rattler-build
+        run: |
+          pixi global install rattler-build==${{ env.RATTLER_BUILD_VERSION }}
+
+      - name: Build conda package
+        shell: bash
+        run: |
+          rattler-build build \
+            --recipe conda.recipe/${{ matrix.recipe }}/recipe.yaml \
+            --output-dir "${RUNNER_TEMP}/rattler-output"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.recipe }}
+          path: ${{ runner.temp }}/rattler-output/
+          retention-days: 7
+          if-no-files-found: error
+
+  publish:
+    name: Publish to prefix.dev
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Set up Pixi
+        uses: prefix-dev/setup-pixi@v0.5.0
+        with:
+          pixi-version: latest
+          run-install: false
+
+      - name: Install rattler-build
+        run: |
+          pixi global install rattler-build==${{ env.RATTLER_BUILD_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Upload to prefix.dev (edge)
+        run: |
+          for pkg in $(find artifacts/ -type f \( -name "*.conda" -o -name "*.tar.bz2" \)); do
+            echo "Uploading ${pkg} to edge"
+            if ! output=$(rattler-build upload prefix -c edge "${pkg}" 2>&1); then
+              if echo "$output" | grep -q "409"; then
+                echo "Already exists, skipping: ${pkg}"
+              else
+                echo "$output" && exit 1
+              fi
+            fi
+          done
+
+      - name: Upload to prefix.dev (almost-conductor, tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          for pkg in $(find artifacts/ -type f \( -name "*.conda" -o -name "*.tar.bz2" \)); do
+            echo "Uploading ${pkg} to almost-conductor"
+            if ! output=$(rattler-build upload prefix -c almost-conductor "${pkg}" 2>&1); then
+              if echo "$output" | grep -q "409"; then
+                echo "Already exists, skipping: ${pkg}"
+              else
+                echo "$output" && exit 1
+              fi
+            fi
+          done

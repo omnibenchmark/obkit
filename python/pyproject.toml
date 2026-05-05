@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "obkit"
-version = "0.0.2"
+version = "0.0.3"
 description = "Utility toolkit for omnibenchmark modules and Snakemake workflows"
 readme = "README.md"
 license = { file = "LICENSE" }

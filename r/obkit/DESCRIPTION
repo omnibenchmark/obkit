@@ -1,7 +1,7 @@
 Package: obkit
 Type: Package
 Title: Omnibenchmark Utility Toolkit
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(
     person(given = "Omnibenchmark Contributors", email = "ben.uzh@proton.me", role = c("aut", "cre")),
     person(given = "Mark", family = "Robinson", role = "aut"))

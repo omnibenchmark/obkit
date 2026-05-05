@@ -1,5 +1,7 @@
 # obkit
 
+[![obkit status badge](https://omnibenchmark.r-universe.dev/obkit/badges/version)](https://omnibenchmark.r-universe.dev/obkit)
+
 Utility toolkit for [omnibenchmark](https://omnibenchmark.org) modules and
 snakemake workflows. Available for Python and R. Zero or near-zero
 dependencies.

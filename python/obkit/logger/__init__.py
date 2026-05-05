@@ -14,7 +14,7 @@ def init_logger(path):
     if not isinstance(path, str) or not path:
         raise ValueError("init_logger(): 'path' must be a non-empty string")
     os.makedirs(path, exist_ok=True)
-    log_file = os.path.join(os.path.realpath(path), "omnibench-events.jsonl")
+    log_file = os.path.join(os.path.realpath(path), "obkit-events.jsonl")
     _state["log_file"] = log_file
     _state["warned_uninit"] = False
     return log_file

@@ -29,7 +29,7 @@ emit("align", "start")
 emit("align", "end", attrs={"reads": 12345})
 ```
 
-Events are written to `omnibench-events.jsonl` inside the directory passed to
+Events are written to `obkit-events.jsonl` inside the directory passed to
 `init_logger`. See the [wire format spec](https://github.com/omnibenchmark/obkit/blob/main/docs/spec-logger.md)
 for the record schema.
 

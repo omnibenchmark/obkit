@@ -9,7 +9,7 @@ test_that("logger_init creates missing directory and returns log path", {
   expect_false(dir.exists(d))
   p <- logger_init(d)
   expect_true(dir.exists(d))
-  expect_equal(basename(p), "omnibench-events.jsonl")
+  expect_equal(basename(p), "obkit-events.jsonl")
 })
 
 test_that("logger_init rejects bad input", {

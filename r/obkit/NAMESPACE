@@ -1,3 +1,7 @@
 export(logger_init)
 export(logger_emit)
+export(read_aggregates)
+export(read_phase_ranges)
+export(plot_annotated_profiles)
 importFrom(jsonlite, toJSON)
+importFrom(jsonlite, fromJSON)

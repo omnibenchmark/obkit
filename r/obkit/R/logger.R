@@ -10,7 +10,7 @@
 #' Initialize the event logger.
 #'
 #' Creates `path` if it does not exist and configures subsequent
-#' `logger_emit()` calls to append to `<path>/omnibench-events.jsonl`.
+#' `logger_emit()` calls to append to `<path>/obkit-events.jsonl`.
 #'
 #' @param path Directory that will hold the event log.
 #' @return The resolved log file path, invisibly.
@@ -21,7 +21,7 @@ logger_init <- function(path) {
   }
   dir.create(path, showWarnings = FALSE, recursive = TRUE)
   log_file <- file.path(normalizePath(path, mustWork = TRUE),
-                        "omnibench-events.jsonl")
+                        "obkit-events.jsonl")
   .obkit_state$log_file <- log_file
   .obkit_state$warned_uninit <- FALSE
   invisible(log_file)
@@ -30,7 +30,7 @@ logger_init <- function(path) {
 #' Emit a lifecycle event.
 #'
 #' Appends a single JSON-lines record to the configured log file. See
-#' `SPEC.md` (omnibench-events 0.1) for the wire format.
+#' `SPEC.md` (obkit-events 0.1) for the wire format.
 #'
 #' @param event Caller-supplied event name.
 #' @param phase Either `"start"` or `"end"`.

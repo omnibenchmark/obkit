@@ -25,7 +25,7 @@ init_logger("/path/to/logs")
 ```
 
 `init_logger(path)` creates the directory if needed and sets the output
-file to `<path>/omnibench-events.jsonl`. Must be called before any `emit`.
+file to `<path>/obkit-events.jsonl`. Must be called before any `emit`.
 
 ```python
 emit("align", "start")
@@ -84,7 +84,7 @@ logger_init(path)
 ```
 
 `logger_init(path)` creates the directory if needed and configures the
-output file to `<path>/omnibench-events.jsonl`. Returns the resolved
+output file to `<path>/obkit-events.jsonl`. Returns the resolved
 path invisibly.
 
 ```r

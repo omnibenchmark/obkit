@@ -1,4 +1,4 @@
-# omnibench-events spec
+# obkit-events spec
 
 `spec: 0.1`
 
@@ -32,7 +32,7 @@ The keywords MUST, SHOULD, and MAY follow RFC 2119.
   processes can add events to the same file sequentially.
 - Readers MUST tolerate a trailing partial line (a writer killed
   mid-write) by discarding it.
-- File path: `<log_dir>/omnibench-events.jsonl`, where `<log_dir>` is
+- File path: `<log_dir>/obkit-events.jsonl`, where `<log_dir>` is
   the directory configured by the host application (e.g. via an
   `init_logger(path)` call).
 

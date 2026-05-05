@@ -12,7 +12,7 @@ def test_init_logger_creates_missing_directory_and_returns_log_path():
         assert not os.path.exists(d)
         p = init_logger(d)
         assert os.path.isdir(d)
-        assert os.path.basename(p) == "omnibench-events.jsonl"
+        assert os.path.basename(p) == "obkit-events.jsonl"
 
 
 def test_init_logger_rejects_bad_input():

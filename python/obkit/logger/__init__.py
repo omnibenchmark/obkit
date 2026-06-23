@@ -3,6 +3,7 @@ import os
 import socket
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 _state = {
     "log_file": None,
@@ -11,8 +12,8 @@ _state = {
 
 
 def init_logger(path):
-    if not isinstance(path, str) or not path:
-        raise ValueError("init_logger(): 'path' must be a non-empty string")
+    if not isinstance(path, (str, Path)) or not str(path):
+        raise ValueError("init_logger(): 'path' must be a non-empty string or Path")
     os.makedirs(path, exist_ok=True)
     log_file = os.path.join(os.path.realpath(path), "obkit-events.jsonl")
     _state["log_file"] = log_file

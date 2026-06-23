@@ -1,5 +1,6 @@
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -12,6 +13,15 @@ def test_init_logger_creates_missing_directory_and_returns_log_path():
         assert not os.path.exists(d)
         p = init_logger(d)
         assert os.path.isdir(d)
+        assert os.path.basename(p) == "obkit-events.jsonl"
+
+
+def test_init_logger_accepts_path_object():
+    with tempfile.TemporaryDirectory() as base:
+        d = Path(base) / "path-subdir"
+        assert not d.exists()
+        p = init_logger(d)
+        assert d.is_dir()
         assert os.path.basename(p) == "obkit-events.jsonl"
 
 

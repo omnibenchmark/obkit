@@ -2,7 +2,7 @@ import json
 import os
 import socket
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _state = {
@@ -22,7 +22,7 @@ def init_logger(path):
 
 
 def _iso_ts():
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return now.strftime("%Y-%m-%dT%H:%M:%S.") + f"{now.microsecond // 1000:03d}Z"
 
 
@@ -59,6 +59,6 @@ def emit(event, phase, attrs=None):
         with open(log_file, "a", encoding="utf-8") as f:
             f.write(line + "\n")
         return True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 -- logging must never crash the caller
         print(f"obkit: emit() write failed: {e}", file=sys.stderr)
         return False

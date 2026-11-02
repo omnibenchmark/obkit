@@ -6,27 +6,37 @@
 
 #' Parse aggregated samples from a denet JSONL trace.
 #'
-#' Reads a denet output file where each non-header line is a JSON object
-#' containing an `aggregated` field, and returns a data.frame of those
-#' samples with columns prefixed `aggregated.` (e.g. `aggregated.ts_ms`,
-#' `aggregated.cpu_usage`, `aggregated.mem_rss_kb`).
+#' Reads a denet JSONL trace and returns one row per record that carries an
+#' `aggregated` field, with columns prefixed `aggregated.` (e.g.
+#' `aggregated.ts_ms`, `aggregated.cpu_usage`, `aggregated.mem_rss_kb`).
 #'
-#' The first line is treated as a metadata header and skipped, matching
-#' denet's current output format.
+#' Records without `aggregated` are skipped: the metadata header, and in
+#' denet >= 0.10 the `child` and `exit` records interleaved with the samples.
+#' Nested fields are flattened (`aggregated.psi_mem.some_avg10`); a field
+#' missing from some samples is `NA` there. A trailing partial line (a
+#' profiler killed mid-write) is discarded.
 #'
 #' @param path Path to a denet JSONL file.
 #' @return A data.frame, one row per sample.
 #' @export
 read_aggregates <- function(path) {
   lines <- readLines(path, warn = FALSE)
-  if (length(lines) <= 1L) {
+  aggs <- lapply(lines, function(ln) {
+    rec <- tryCatch(jsonlite::fromJSON(ln, simplifyVector = FALSE),
+                    error = function(e) NULL)
+    if (is.list(rec) && is.list(rec[["aggregated"]])) unlist(rec[["aggregated"]])
+  })
+  aggs <- Filter(Negate(is.null), aggs)
+  if (!length(aggs)) {
     return(data.frame())
   }
-  rows <- lapply(lines[-1L], function(ln) {
-    rec <- jsonlite::fromJSON(ln, simplifyVector = FALSE)
-    as.data.frame(rec[["aggregated"]], stringsAsFactors = FALSE)
+  cols <- unique(unlist(lapply(aggs, names)))
+  out <- lapply(cols, function(k) {
+    vapply(aggs, function(a) if (k %in% names(a)) as.numeric(a[[k]]) else NA_real_,
+           numeric(1))
   })
-  do.call(rbind, rows)
+  names(out) <- paste0("aggregated.", cols)
+  as.data.frame(out, check.names = FALSE)
 }
 
 .parse_iso_ms <- function(ts) {
